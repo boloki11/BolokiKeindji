@@ -1,183 +1,685 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Boloki Ahmat Keindji — Portfolio</title>
-    <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        :root {
+          --bg: #0b132b;
+          --panel: #111a3a;
+          --text: #eaf2ff;
+          --muted: #9fb0d1;
+          --accent: #0fb9b1;
+          --accent2: #7c3aed;
+          --ring: rgba(15,185,177,0.35);
+          --edge: rgba(124,58,237,0.25);
+          --link: #60a5fa;
+          --social-surface: rgba(255,255,255,.06);
+          --social-border: rgba(255,255,255,.12);
+        }
+        html.light {
+          --bg: #f6f9ff;
+          --panel: #ffffff;
+          --text: #0b132b;
+          --muted: #4b5563;
+          --accent: #0ea5a5;
+          --accent2: #7c3aed;
+          --ring: rgba(14,165,165,0.28);
+          --edge: rgba(124,58,237,0.25);
+          --link: #2563eb;
+          --social-surface: rgba(0,0,0,.035);
+          --social-border: rgba(0,0,0,.1);
+        }
+
+        html, body { height: 100%; }
+        body {
+          background:
+            radial-gradient(1100px 520px at 75% -10%, rgba(15,185,177,0.12), transparent 60%),
+            radial-gradient(900px 480px at 0% 110%, rgba(124,58,237,0.1), transparent 60%),
+            var(--bg);
+          color: var(--text);
+          font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+          overflow-x: hidden;
+        }
+
+        #particles, #neon-lines {
+          position: fixed; inset: 0; width: 100%; height: 100%;
+          pointer-events: none; z-index: 0;
+        }
+        #neon-lines { z-index: 1; mix-blend-mode: screen; opacity: .6; }
+
+        .safe { max-width: 1200px; margin-inline: auto; padding-inline: 1rem; }
+
+        .navbar {
+          backdrop-filter: blur(10px);
+          background: linear-gradient(to bottom, color-mix(in oklab, var(--panel), transparent 30%) , transparent);
+          border-bottom: 1px solid color-mix(in oklab, var(--accent), transparent 80%);
+          box-shadow: 0 10px 30px rgba(0,0,0,.18);
+          transition: background .3s ease, border-color .3s ease;
+        }
+        .nav-link { position: relative; color: color-mix(in oklab, var(--text), transparent 15%); }
+        .nav-link:hover { color: var(--text); }
+        .nav-link:after {
+          content: ""; position: absolute; left: 0; right: 0; bottom: -6px; height: 2px; border-radius: 999px;
+          background: linear-gradient(90deg, var(--accent), var(--accent2));
+          transform: scaleX(0); transform-origin: left;
+          transition: transform .25s ease, opacity .25s ease; opacity: .9;
+          filter: drop-shadow(0 0 6px color-mix(in oklab, var(--accent) 60%, transparent));
+        }
+        .nav-link:hover:after, .nav-link.active:after { transform: scaleX(1); }
+
+        .section { position: relative; z-index: 2; padding-block: 72px; }
+        .card {
+          background: linear-gradient(180deg, color-mix(in oklab, #fff, transparent 98%), transparent 35%), var(--panel);
+          border: 1px solid color-mix(in oklab, var(--accent), transparent 82%);
+          border-radius: 16px;
+          box-shadow: 0 15px 40px rgba(0,0,0,.18), inset 0 0 0 1px color-mix(in oklab, #fff, transparent 95%);
+          transition: transform .45s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease, border-color .35s ease, filter .3s ease;
+        }
+        .card:hover {
+          transform: translateY(-6px);
+          border-color: color-mix(in oklab, var(--accent), transparent 60%);
+          box-shadow: 0 30px 60px rgba(0,0,0,.28), 0 0 22px color-mix(in oklab, var(--accent) 18%, transparent), 0 0 0 2px var(--edge) inset;
+          filter: saturate(1.05);
+        }
+
+        .btn {
+          display: inline-flex; align-items: center; justify-content: center; gap: .55rem;
+          padding: .72rem 1.05rem; border-radius: .9rem;
+          background: linear-gradient(180deg, var(--accent), var(--accent2));
+          color: #06121a; font-weight: 700; letter-spacing: .2px;
+          transition: transform .2s ease, filter .25s ease, box-shadow .25s ease;
+        }
+        .btn:hover { transform: translateY(-2px); filter: saturate(1.05); box-shadow: 0 12px 28px color-mix(in oklab, var(--accent), transparent 60%), 0 0 0 3px color-mix(in oklab, var(--accent), transparent 70%) inset; }
+
+        input, textarea {
+          color: var(--text);
+          background: color-mix(in oklab, var(--panel), #ffffff 6%);
+          border: 1px solid color-mix(in oklab, var(--accent), transparent 82%);
+        }
+        html.light input, html.light textarea {
+          color: var(--text);
+          background: #ffffff;
+          border-color: rgba(2,6,23,.12);
+        }
+        label { color: color-mix(in oklab, var(--text), transparent 25%); }
+
+        a { color: var(--link); }
+        a:hover { color: color-mix(in oklab, var(--link), #000 18%); }
+
+        @keyframes floatY { 0%,100%{ transform: translateY(-50%) translateY(0);} 50%{ transform: translateY(-50%) translateY(-10px);} }
+        .floating-profile {
+          position: fixed; right: 24px; top: 50%; transform: translateY(-50%);
+          z-index: 2; width: 132px; height: 180px; border-radius: 16px;
+          background: radial-gradient(200px 120px at 20% 0%, color-mix(in oklab, var(--accent), transparent 75%), transparent 50%), var(--panel);
+          border: 1px solid color-mix(in oklab, var(--accent), transparent 75%);
+          box-shadow: 0 0 0 2px var(--edge) inset, 0 12px 28px rgba(0,0,0,.28);
+          display: flex; align-items: center; justify-content: center; overflow: hidden;
+          animation: floatY 6s ease-in-out infinite;
+        }
+        .floating-profile:hover { box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent), transparent 65%) inset, 0 18px 42px rgba(0,0,0,.32); }
+        @media (max-width: 1024px) { .floating-profile { display: none; } }
+
+        .social-btn {
+          border: 1px solid var(--social-border);
+          background: linear-gradient(180deg, var(--social-surface), transparent);
+          color: var(--text);
+          transition: transform .2s ease, box-shadow .25s ease, filter .25s ease;
+        }
+        .social-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(0,0,0,.22), 0 0 16px color-mix(in oklab, var(--accent), transparent 70%); }
+        .icon-fb i { color:#1877F2; } .icon-ig i { color:#E1306C; } .icon-gh i { color:#ECEFF4; } html.light .icon-gh i { color:#171515; }
+        .icon-x i  { color:#0F1419; } .icon-wa i { color:#25D366; }
+
+        .img-base { width: 100%; height: 100%; object-fit: cover; display: block; background: color-mix(in oklab, var(--panel), #000 6%); }
+        .img-round { border-radius: 9999px; border: 2px solid color-mix(in oklab, var(--accent), transparent 60%); box-shadow: 0 8px 28px rgba(0,0,0,.28), 0 0 0 3px color-mix(in oklab, var(--accent), transparent 65%) inset; }
+        .img-rect { border-radius: 14px; border: 1px solid color-mix(in oklab, var(--accent), transparent 80%); }
+
+        .section h2 { color: var(--text); }
+        .section p, .section li, .section span, .section .text { color: color-mix(in oklab, var(--text), transparent 8%); }
+
+        :target { scroll-margin-top: 110px; }
+    </style>
 </head>
-<body class="dark-theme">
-<!-- Particle background -->
+
+<body>
 <canvas id="particles"></canvas>
-<!-- Neon connecting lines canvas -->
 <canvas id="neon-lines"></canvas>
 
-<header>
+<header class="sticky top-0 z-30">
     <nav class="navbar">
-        <div class="nav-left">
-            <div class="logo">Boloki</div>
+        <div class="safe flex items-center justify-between py-4">
+            <div class="text-xl font-extrabold tracking-tight" style="color:var(--accent)">Boloki</div>
+
+            <ul class="hidden md:flex items-center gap-6 text-sm">
+                <li><a href="#home" class="nav-link transition" data-i18n="nav_home">Home</a></li>
+                <li><a href="#about" class="nav-link transition" data-i18n="nav_about">About</a></li>
+                <li><a href="#skills" class="nav-link transition" data-i18n="nav_skills">Skills</a></li>
+                <li><a href="#projects" class="nav-link transition" data-i18n="nav_projects">Projects</a></li>
+                <li><a href="#contact" class="nav-link transition" data-i18n="nav_contact">Contact</a></li>
+            </ul>
+
+            <div class="flex items-center gap-2">
+                <select id="langSelect" class="bg-transparent border border-[color-mix(in oklab,var(--text),transparent 80%)] text-[color-mix(in oklab,var(--text),transparent 20%)] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[color-mix(in oklab,var(--accent),transparent 50%)]" aria-label="Language">
+                    <option value="en">EN</option>
+                    <option value="fr">FR</option>
+                    <option value="ar">AR</option>
+                </select>
+                <button id="themeToggle" class="btn !px-3 !py-2" aria-label="Toggle theme">
+                    <i class="fas fa-adjust"></i>
+                </button>
+                <button id="menuToggle" class="md:hidden btn !px-3 !py-2" aria-label="Open menu"><i class="fas fa-bars"></i></button>
+            </div>
         </div>
 
-        <ul class="nav-links">
-            <li><a href="#home" class="nav-link">Home</a></li>
-            <li><a href="#about" class="nav-link">About</a></li>
-            <li><a href="#skills" class="nav-link">Skills</a></li>
-            <li><a href="#projects" class="nav-link">Projects</a></li>
-            <li><a href="#contact" class="nav-link">Contact</a></li>
-        </ul>
-
-        <div class="nav-right">
-            <button id="themeToggle" class="btn theme-toggle" title="Toggle dark/light"><i class="fas fa-adjust"></i></button>
-            <select id="langSelect" class="lang-select" aria-label="Language">
-                <option value="en">EN</option>
-                <option value="fr">FR</option>
-                <option value="ar">AR</option>
-            </select>
-            <button id="menuToggle" class="btn menu-toggle" aria-label="Menu"><i class="fas fa-bars"></i></button>
+        <div id="mobileMenu" class="safe hidden md:hidden pb-4">
+            <ul class="grid gap-2 text-sm">
+                <li><a href="#home" class="nav-link block px-4 py-2 rounded-lg hover:bg-[color-mix(in oklab,var(--panel),#fff 5%)]" data-i18n="nav_home">Home</a></li>
+                <li><a href="#about" class="nav-link block px-4 py-2 rounded-lg hover:bg-[color-mix(in oklab,var(--panel),#fff 5%)]" data-i18n="nav_about">About</a></li>
+                <li><a href="#skills" class="nav-link block px-4 py-2 rounded-lg hover:bg-[color-mix(in oklab,var(--panel),#fff 5%)]" data-i18n="nav_skills">Skills</a></li>
+                <li><a href="#projects" class="nav-link block px-4 py-2 rounded-lg hover:bg-[color-mix(in oklab,var(--panel),#fff 5%)]" data-i18n="nav_projects">Projects</a></li>
+                <li><a href="#contact" class="nav-link block px-4 py-2 rounded-lg hover:bg-[color-mix(in oklab,var(--panel),#fff 5%)]" data-i18n="nav_contact">Contact</a></li>
+            </ul>
         </div>
     </nav>
 </header>
 
-<!-- Floating profile picture on the right side of viewport -->
-<img src="img5.jpg" alt="Boloki Ahmat Keindji" class="floating-profile" id="floatingProfile">
+<!-- Floating picture -->
+<aside class="floating-profile">
+    <img
+            class="img-base img-rect"
+            alt="Floating profile"
+            src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=600&q=80"
+            onerror="this.src=''; this.alt='Image failed to load'; this.style.display='none';"
+    />
+</aside>
 
-<!-- Home -->
 <main>
+    <!-- Hero -->
     <section id="home" class="section">
-        <div class="container home-grid">
-            <div class="home-left">
-                <h1 class="hero-title" id="heroName">Boloki Ahmat Keindji</h1>
-                <h2 id="typed-text" class="hero-subtitle"
-                    data-en="Final Year Student in Network & Communication Systems @ AUCA"
-                    data-fr="Étudiant en dernière année en Réseaux & Systèmes de Communication @ AUCA"
-                    data-ar="طالب السنة النهائية في الشبكات وأنظمة الاتصال @ AUCA"></h2>
-                <p id="tagline"
-                   data-en="Future Network Engineer from Chad, passionate about modern digital systems."
-                   data-fr="Futur ingénieur réseau du Tchad, passionné par les systèmes numériques modernes."
-                   data-ar="مهندس شبكات مستقبلي من تشاد، شغوف بالأنظمة الرقمية الحديثة."></p>
+        <div class="safe grid lg:grid-cols-2 gap-10 items-center">
+            <div class="space-y-6">
+                <h1 class="text-4xl md:text-5xl font-extrabold leading-tight" data-i18n="hero_name">Boloki Ahmat Keindji</h1>
+                <p class="text-[color-mix(in oklab,var(--text),transparent 8%)]" data-i18n="hero_sub">
+                    Final Year Student in Network & Communication Systems @ AUCA. Passionate about building secure, reliable digital infrastructure.
+                </p>
 
-                <div class="social-links">
-                    <a class="social social-facebook" href="https://facebook.com" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a class="social social-instagram" href="https://instagram.com" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a class="social social-github" href="https://github.com/boloki11/Boloki_Keindji.git" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
-                    <a class="social social-x" href="https://x.com" target="_blank" aria-label="X"><i class="fab fa-x-twitter"></i></a>
-                    <a class="social social-whatsapp" href="https://wa.me/250791430271" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                <div class="flex flex-wrap gap-3">
+                    <a class="btn" href="#about"><i class="fa-solid fa-user"></i><span data-i18n="btn_about">About Me</span></a>
+                    <a class="px-4 py-2 rounded-lg border border-[color-mix(in oklab,var(--text),transparent 80%)] text-[color-mix(in oklab,var(--text),transparent 10%)] hover:bg-[color-mix(in oklab,var(--panel),#fff 6%)] transition" href="#skills" data-i18n="btn_skills">Skills</a>
+                    <a class="px-4 py-2 rounded-lg border border-[color-mix(in oklab,var(--text),transparent 80%)] text-[color-mix(in oklab,var(--text),transparent 10%)] hover:bg-[color-mix(in oklab,var(--panel),#fff 6%)] transition" href="#projects" data-i18n="btn_projects">Projects</a>
+                </div>
+
+                <div class="flex items-center gap-2 pt-1">
+                    <a class="social-btn icon-fb inline-flex items-center justify-center w-10 h-10 rounded-full" href="https://facebook.com" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f text-xl"></i></a>
+                    <a class="social-btn icon-ig inline-flex items-center justify-center w-10 h-10 rounded-full" href="https://instagram.com" target="_blank" aria-label="Instagram"><i class="fab fa-instagram text-xl"></i></a>
+                    <span class="social-btn icon-gh inline-flex items-center justify-center w-10 h-10 rounded-full cursor-default" aria-label="GitHub (icon only)"><i class="fab fa-github text-xl"></i></span>
+                    <a class="social-btn icon-x inline-flex items-center justify-center w-10 h-10 rounded-full" href="https://x.com" target="_blank" aria-label="X"><i class="fab fa-x-twitter text-xl"></i></a>
+                    <a class="social-btn icon-wa inline-flex items-center justify-center w-10 h-10 rounded-full" href="https://wa.me/250791430271" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp text-xl"></i></a>
                 </div>
             </div>
 
-            <div class="home-right">
-                <!-- decorative framed rectangle behind profile -->
-                <div class="profile-frame">
-                    <img src="img6.jpg" alt="Boloki profile" class="profile-img">
+            <!-- Profile pictures -->
+            <div class="card p-6">
+                <div class="flex items-center gap-5">
+                    <div class="w-28 h-28 overflow-hidden">
+                        <img
+                                class="img-base img-round"
+                                alt="Profile photo"
+                                src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&q=80"
+                                onerror="this.src=''; this.alt='Image failed to load'; this.style.display='none';"
+                        />
+                    </div>
+                    <div>
+                        <div class="text-xl font-semibold" data-i18n="hero_hi">Hello, I'm Boloki</div>
+                        <div class="text-sm text-[color-mix(in oklab,var(--text),transparent 35%)]" data-i18n="hero_role">Network & Communication Systems</div>
+                    </div>
+                </div>
+                <div class="rounded-xl overflow-hidden h-[280px] mt-5">
+                    <img
+                            class="img-base img-rect"
+                            alt="Banner"
+                            src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1000&q=80"
+                            onerror="this.src=''; this.alt='Image failed to load'; this.style.display='none';"
+                    />
                 </div>
             </div>
         </div>
     </section>
 
     <!-- About -->
-    <section id="about" class="section neon-border">
-        <div class="container">
-            <h2 data-lang-en="About Me" data-lang-fr="À Propos" data-lang-ar="حول">About Me</h2>
-            <p id="aboutText"
-               data-lang-en="I am a final year student at the Adventist University of Central Africa (AUCA), pursuing a degree in Network and Communication Systems. Originally from Chad, I am passionate about networking, cybersecurity, and modern communication technologies. My goal is to design efficient, secure, and innovative systems that bridge connectivity gaps across communities."
-               data-lang-fr="Je suis un étudiant en dernière année à l'Université Adventiste de l'Afrique Centrale (AUCA), poursuivant un diplôme en Réseaux et Systèmes de Communication. Originaire du Tchad, je suis passionné par les réseaux, la cybersécurité et les technologies de communication modernes. Mon objectif est de concevoir des systèmes efficaces, sécurisés et innovants qui comblent les lacunes de connectivité dans les communautés."
-               data-lang-ar="أنا طالب في السنة النهائية في الجامعة المعمدانية لأفريقيا الوسطى (AUCA)، أدرس الشبكات وأنظمة الاتصال. أصلي من تشاد، شغوف بالشبكات والأمن السيبراني وتقنيات الاتصال الحديثة. هدفي هو تصميم أنظمة فعالة وآمنة ومبتكرة لتجسير فجوات الاتصال في المجتمعات.">
-            </p>
-        </div>
-    </section>
-
-    <!-- Skills -->
-    <section id="skills" class="section neon-border">
-        <div class="container">
-            <h2 data-lang-en="Skills" data-lang-fr="Compétences" data-lang-ar="المهارات">Skills</h2>
-            <div class="skills-container">
-                <div class="skill">Networking (Cisco Packet Tracer, Routing, Switching, Network Design)</div>
-                <div class="skill">Cybersecurity (Firewall, IDS/IPS, Ethical Hacking basics, Linux Security)</div>
-                <div class="skill">Programming (Java OOP, HTML/CSS/JS)</div>
-                <div class="skill">Tools (Wireshark, VirtualBox, MySQL)</div>
-                <div class="skill">Soft Skills (Problem Solving, Teamwork, Communication, Training)</div>
+    <section id="about" class="section">
+        <div class="safe">
+            <div class="card p-6 md:p-8">
+                <h2 class="text-2xl md:text-3xl font-bold mb-4" data-i18n="about_title">About Me</h2>
+                <p class="leading-relaxed text-[color-mix(in oklab,var(--text),transparent 5%)]" data-i18n="about_body">
+                    I'm a final year student specializing in Network & Communication Systems at AUCA. I love building
+                    reliable, secure, and modern digital infrastructures that connect people and ideas. My interests include
+                    routing, switching, network design, Linux systems, and practical security.
+                </p>
+                <div class="mt-6 grid sm:grid-cols-2 gap-4">
+                    <div class="p-4 rounded-lg border border-[color-mix(in oklab,var(--text),transparent 85%)] bg-[color-mix(in oklab,var(--panel),#fff 6%)]">
+                        <div class="text-sm text-[color-mix(in oklab,var(--text),transparent 40%)]" data-i18n="about_location_label">Location</div>
+                        <div class="font-semibold" data-i18n="about_location_value">Kigali, Rwanda</div>
+                    </div>
+                    <div class="p-4 rounded-lg border border-[color-mix(in oklab,var(--text),transparent 85%)] bg-[color-mix(in oklab,var(--panel),#fff 6%)]">
+                        <div class="text-sm text-[color-mix(in oklab,var(--text),transparent 40%)]" data-i18n="about_focus_label">Focus</div>
+                        <div class="font-semibold" data-i18n="about_focus_value">Networking, Systems, Security</div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Projects (horizontal carousel) -->
-    <section id="projects" class="section neon-border">
-        <div class="container">
-            <h2 data-lang-en="Projects" data-lang-fr="Projets" data-lang-ar="المشاريع">Projects</h2>
-
-            <div class="projects-wrap">
-                <button class="carousel-btn prev" aria-label="Previous project">⟵</button>
-
-                <div class="project-carousel" id="projectCarousel" role="region" aria-roledescription="carousel">
-                    <div class="project" data-title="Network Simulation Project" data-desc="Cisco Packet Tracer design for enterprise networks.">
-                        <img src="img1.jpg" alt="Network Simulation">
-                        <div class="project-meta">
-                            <h3>Network Simulation Project</h3>
-                            <p>Cisco Packet Tracer design for enterprise networks.</p>
+    <!-- Skills -->
+    <section id="skills" class="section">
+        <div class="safe">
+            <div class="card p-6 md:p-8">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6" data-i18n="skills_title">Skills</h2>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div>
+                        <h3 class="font-semibold mb-3" data-i18n="skills_net">Networking</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between text-sm"><span data-i18n="skills_routing">Routing & Switching</span><span>80%</span></div>
+                                <div class="h-2 bg-[color-mix(in oklab,var(--text),transparent 90%)] rounded"><div class="h-2 rounded" style="width:80%; background:linear-gradient(90deg,var(--accent),var(--accent2))"></div></div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-sm"><span data-i18n="skills_design">Network Design</span><span>75%</span></div>
+                                <div class="h-2 bg-[color-mix(in oklab,var(--text),transparent 90%)] rounded"><div class="h-2 rounded" style="width:75%; background:linear-gradient(90deg,var(--accent),var(--accent2))"></div></div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="project" data-title="Cybersecurity Lab" data-desc="Testing firewall and IDS configurations.">
-                        <img src="img2.jpg" alt="Cybersecurity Lab">
-                        <div class="project-meta">
-                            <h3>Cybersecurity Lab</h3>
-                            <p>Testing firewall and IDS configurations.</p>
+                    <div>
+                        <h3 class="font-semibold mb-3" data-i18n="skills_sys">Systems</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between text-sm"><span data-i18n="skills_linux">Linux Admin</span><span>70%</span></div>
+                                <div class="h-2 bg-[color-mix(in oklab,var(--text),transparent 90%)] rounded"><div class="h-2 rounded" style="width:70%; background:linear-gradient(90deg,var(--accent),var(--accent2))"></div></div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-sm"><span data-i18n="skills_virtualization">Virtualization</span><span>65%</span></div>
+                                <div class="h-2 bg-[color-mix(in oklab,var(--text),transparent 90%)] rounded"><div class="h-2 rounded" style="width:65%; background:linear-gradient(90deg,var(--accent),var(--accent2))"></div></div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="project" data-title="Java OOP Applications" data-desc="Student & Management Systems built in Java.">
-                        <img src="img3.jpg" alt="Java OOP">
-                        <div class="project-meta">
-                            <h3>Java OOP Applications</h3>
-                            <p>Student & Management Systems built in Java.</p>
+                    <div>
+                        <h3 class="font-semibold mb-3" data-i18n="skills_sec">Security</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between text-sm"><span data-i18n="skills_firewall">Firewall & ACLs</span><span>70%</span></div>
+                                <div class="h-2 bg-[color-mix(in oklab,var(--text),transparent 90%)] rounded"><div class="h-2 rounded" style="width:70%; background:linear-gradient(90deg,var(--accent),var(--accent2))"></div></div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-sm"><span data-i18n="skills_monitoring">Monitoring</span><span>60%</span></div>
+                                <div class="h-2 bg-[color-mix(in oklab,var(--text),transparent 90%)] rounded"><div class="h-2 rounded" style="width:60%; background:linear-gradient(90deg,var(--accent),var(--accent2))"></div></div>
+                            </div>
                         </div>
                     </div>
+
                 </div>
+            </div>
+        </div>
+    </section>
 
-                <button class="carousel-btn next" aria-label="Next project">⟶</button>
+    <!-- Projects -->
+    <section id="projects" class="section">
+        <div class="safe">
+            <div class="flex items-end justify-between mb-6">
+                <h2 class="text-2xl md:text-3xl font-bold" data-i18n="projects_title">Projects</h2>
+                <div class="text-sm text-[color-mix(in oklab,var(--text),transparent 35%)]" data-i18n="projects_note">Small sample shown</div>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <article class="card p-5 flex flex-col">
+                    <div class="h-40 rounded-lg overflow-hidden mb-3">
+                        <img class="img-base img-rect" alt="Campus Network Topology"
+                             src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1000&q=80"
+                             onerror="this.src=''; this.alt='Image failed to load'; this.style.display='none';" />
+                    </div>
+                    <h3 class="font-semibold mb-1" data-i18n="prj1_title">Campus Network Topology</h3>
+                    <p class="text-[color-mix(in oklab,var(--text),transparent 12%)] text-sm mb-3" data-i18n="prj1_desc">
+                        Designed a scalable campus network with VLANs, inter-VLAN routing, and basic QoS.
+                    </p>
+                    <div class="mt-auto flex gap-2">
+                        <span class="px-2 py-1 text-xs rounded bg-[color-mix(in oklab,var(--text),transparent 90%)]">Cisco</span>
+                        <span class="px-2 py-1 text-xs rounded bg-[color-mix(in oklab,var(--text),transparent 90%)]">VLAN</span>
+                    </div>
+                </article>
+
+                <article class="card p-5 flex flex-col">
+                    <div class="h-40 rounded-lg overflow-hidden mb-3">
+                        <img class="img-base img-rect" alt="Secure Edge Setup"
+                             src="https://images.unsplash.com/photo-1518779578993-ec3579fee39f?w=1000&q=80"
+                             onerror="this.src=''; this.alt='Image failed to load'; this.style.display='none';" />
+                    </div>
+                    <h3 class="font-semibold mb-1" data-i18n="prj2_title">Secure Edge Setup</h3>
+                    <p class="text-[color-mix(in oklab,var(--text),transparent 12%)] text-sm mb-3" data-i18n="prj2_desc">
+                        Configured firewall rules, NAT, and VPN for small business remote access.
+                    </p>
+                    <div class="mt-auto flex gap-2">
+                        <span class="px-2 py-1 text-xs rounded bg-[color-mix(in oklab,var(--text),transparent 90%)]">Firewall</span>
+                        <span class="px-2 py-1 text-xs rounded bg-[color-mix(in oklab,var(--text),transparent 90%)]">VPN</span>
+                    </div>
+                </article>
+
+                <article class="card p-5 flex flex-col">
+                    <div class="h-40 rounded-lg overflow-hidden mb-3">
+                        <img class="img-base img-rect" alt="Linux Services Bundle"
+                             src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1000&q=80"
+                             onerror="this.src=''; this.alt='Image failed to load'; this.style.display='none';" />
+                    </div>
+                    <h3 class="font-semibold mb-1" data-i18n="prj3_title">Linux Services Bundle</h3>
+                    <p class="text-[color-mix(in oklab,var(--text),transparent 12%)] text-sm mb-3" data-i18n="prj3_desc">
+                        Deployed DHCP, DNS, and monitoring stack for a lab environment.
+                    </p>
+                    <div class="mt-auto flex gap-2">
+                        <span class="px-2 py-1 text-xs rounded bg-[color-mix(in oklab,var(--text),transparent 90%)]">Linux</span>
+                        <span class="px-2 py-1 text-xs rounded bg-[color-mix(in oklab,var(--text),transparent 90%)]" data-i18n="tag_monitoring">Monitoring</span>
+                    </div>
+                </article>
             </div>
         </div>
     </section>
 
     <!-- Contact -->
-    <section id="contact" class="section neon-border">
-        <div class="container contact-grid">
-            <div class="contact-form-wrap">
-                <h2 data-lang-en="Contact Me" data-lang-fr="Me Contacter" data-lang-ar="اتصل بي">Contact Me</h2>
-                <form id="contactForm" class="contact-form">
-                    <input type="text" id="nameInput" placeholder="Your Name" required>
-                    <input type="email" id="emailInput" placeholder="Your Email" required>
-                    <textarea id="messageInput" placeholder="Your Message" rows="6" required></textarea>
-                    <button type="submit" class="btn submit-btn">Send</button>
+    <section id="contact" class="section">
+        <div class="safe grid lg:grid-cols-2 gap-8">
+            <div class="card p-6 md:p-8">
+                <h2 class="text-2xl md:text-3xl font-bold mb-4" data-i18n="contact_title">Contact</h2>
+                <p class="mb-6 text-[color-mix(in oklab,var(--text),transparent 12%)]" data-i18n="contact_desc">
+                    Want to collaborate or just say hello? Send me a message below. This is a demo form and won’t send emails.
+                </p>
+
+                <form id="contactForm" class="grid gap-4">
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-sm" for="name" data-i18n="label_name">Name</label>
+                            <input id="name" required type="text" class="mt-1 w-full px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[color-mix(in oklab,var(--accent),transparent 50%)]" placeholder="Your name" data-i18n-ph="ph_name">
+                        </div>
+                        <div>
+                            <label class="text-sm" for="email" data-i18n="label_email">Email</label>
+                            <input id="email" required type="email" class="mt-1 w-full px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[color-mix(in oklab,var(--accent),transparent 50%)]" placeholder="you@example.com" data-i18n-ph="ph_email">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-sm" for="message" data-i18n="label_message">Message</label>
+                        <textarea id="message" required rows="4" class="mt-1 w-full px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[color-mix(in oklab,var(--accent),transparent 50%)]" placeholder="Write your message..." data-i18n-ph="ph_message"></textarea>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button type="submit" class="btn"><i class="fa-regular fa-paper-plane"></i><span data-i18n="btn_send">Send</span></button>
+                        <span class="text-xs text-[color-mix(in oklab,var(--text),transparent 45%)]" data-i18n="contact_demo_note">Demo only — no emails are sent</span>
+                    </div>
+                    <p id="formMsg" class="hidden text-emerald-500 text-sm font-medium" data-i18n="contact_thanks">Thanks! Your demo message was recorded locally.</p>
                 </form>
             </div>
 
-            <div class="contact-info">
-                <h3>Contact Info</h3>
-                <p><strong>Email:</strong> Bolokiahmat4@gmail.com</p>
-                <p><strong>Phone:</strong> +250 791 430 271</p>
-                <p><strong>Location:</strong> Based in Rwanda, from Chad</p>
-                <p><strong>GitHub:</strong> <a href="https://github.com/boloki11/Boloki_Keindji.git" target="_blank">boloki11</a></p>
+            <div class="card p-6 md:p-8">
+                <h3 class="text-xl font-semibold mb-4" data-i18n="contact_info">Contact Info</h3>
+                <ul class="space-y-3">
+                    <li class="group flex items-center gap-3">
+                        <span class="inline-flex w-10 h-10 items-center justify-center rounded-full bg-[color-mix(in oklab,var(--panel),#fff 6%)] text-[var(--accent)] group-hover:scale-110 transition shadow-[0_0_0_3px_var(--edge)_inset]"><i class="fa-solid fa-envelope"></i></span>
+                        <a class="hover:underline" href="mailto:boloki@example.com" target="_blank">boloki@example.com</a>
+                    </li>
+                    <li class="group flex items-center gap-3">
+                        <span class="inline-flex w-10 h-10 items-center justify-center rounded-full bg-[color-mix(in oklab,var(--panel),#fff 6%)] text-[var(--accent)] group-hover:scale-110 transition shadow-[0_0_0_3px_var(--edge)_inset]"><i class="fa-solid fa-phone"></i></span>
+                        <a class="hover:underline" href="tel:+250791430271" target="_blank">+250 791 430 271</a>
+                    </li>
+                    <li class="group flex items-center gap-3">
+                        <span class="inline-flex w-10 h-10 items-center justify-center rounded-full bg-[color-mix(in oklab,var(--panel),#fff 6%)] text-[var(--accent)] group-hover:scale-110 transition shadow-[0_0_0_3px_var(--edge)_inset]"><i class="fa-solid fa-location-dot"></i></span>
+                        <span data-i18n="contact_city">Kigali, Rwanda</span>
+                    </li>
+                </ul>
             </div>
         </div>
     </section>
 </main>
 
 <!-- Footer -->
-<footer>
-    <div class="container footer-grid">
-        <p>&copy; 2025 Boloki Ahmat Keindji — Built with ❤️</p>
-        <div class="footer-socials">
-            <a href="https://facebook.com" target="_blank" class="social-facebook"><i class="fab fa-facebook-f"></i></a>
-            <a href="https://instagram.com" target="_blank" class="social-instagram"><i class="fab fa-instagram"></i></a>
-            <a href="https://github.com/boloki11/Boloki_Keindji.git" target="_blank" class="social-github"><i class="fab fa-github"></i></a>
-            <a href="https://x.com" target="_blank" class="social-x"><i class="fab fa-x-twitter"></i></a>
-            <a href="https://wa.me/250791430271" target="_blank" class="social-whatsapp"><i class="fab fa-whatsapp"></i></a>
+<footer class="section pt-0">
+    <div class="safe border-t border-[color-mix(in oklab,var(--text),transparent 88%)] pt-6 text-sm flex flex-col md:flex-row items-center justify-between gap-4">
+        <div>© <span id="year"></span> <span data-i18n="hero_name">Boloki Ahmat Keindji</span></div>
+        <div class="flex items-center gap-2">
+            <a class="social-btn icon-fb inline-flex items-center justify-center w-9 h-9 rounded-full" href="https://facebook.com" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a class="social-btn icon-ig inline-flex items-center justify-center w-9 h-9 rounded-full" href="https://instagram.com" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <span class="social-btn icon-gh inline-flex items-center justify-center w-9 h-9 rounded-full cursor-default" aria-label="GitHub (icon only)"><i class="fab fa-github"></i></span>
+            <a class="social-btn icon-x inline-flex items-center justify-center w-9 h-9 rounded-full" href="https://x.com" target="_blank" aria-label="X"><i class="fab fa-x-twitter"></i></a>
+            <a class="social-btn icon-wa inline-flex items-center justify-center w-9 h-9 rounded-full" href="https://wa.me/250791430271" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
         </div>
+        <div class="text-[color-mix(in oklab,var(--text),transparent 35%)]" data-i18n="footer_note">Built with care, clarity, and smooth motion.</div>
     </div>
 </footer>
 
-<script src="script.js"></script>
-</body>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<script>
+    // Helpers
+    const $ = (s, c=document) => c.querySelector(s);
+    const $$ = (s, c=document) => Array.from(c.querySelectorAll(s));
+
+    // Theme
+    const rootEl = document.documentElement;
+    const THEME_KEY = 'boloki_theme';
+    const savedTheme = localStorage.getItem(THEME_KEY);
+    if (savedTheme === 'light') rootEl.classList.add('light');
+    $('#themeToggle').addEventListener('click', () => {
+      rootEl.classList.toggle('light');
+      localStorage.setItem(THEME_KEY, rootEl.classList.contains('light') ? 'light' : 'dark');
+    });
+
+    // Mobile menu
+    $('#menuToggle').addEventListener('click', () => $('#mobileMenu').classList.toggle('hidden'));
+
+    // Footer year
+    $('#year').textContent = new Date().getFullYear();
+
+    // Contact form demo
+    $('#contactForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const msg = $('#formMsg');
+      msg.classList.remove('hidden');
+      msg.style.boxShadow = '0 0 0 8px var(--ring)';
+      setTimeout(() => { msg.style.boxShadow = 'none'; }, 900);
+      e.target.reset();
+    });
+
+    // Background visuals (particles + lines)
+    const pCanvas = document.getElementById('particles');
+    const pCtx = pCanvas.getContext('2d');
+    const nCanvas = document.getElementById('neon-lines');
+    const nCtx = nCanvas.getContext('2d');
+
+    function resize() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const { innerWidth:w, innerHeight:h } = window;
+      [pCanvas, nCanvas].forEach(c => {
+        c.width = Math.floor(w * dpr);
+        c.height = Math.floor(h * dpr);
+        c.style.width = w + 'px';
+        c.style.height = h + 'px';
+        const ctx = c.getContext('2d');
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      });
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // Particles
+    const P = [];
+    const COUNT = 70;
+    for (let i=0;i<COUNT;i++){
+      P.push({ x: Math.random()*pCanvas.width, y: Math.random()*pCanvas.height, vx: (Math.random()-.5)*0.55, vy: (Math.random()-.5)*0.55, r: 1 + Math.random()*2 });
+    }
+    function stepParticles(){
+      const { width:w, height:h } = pCanvas;
+      pCtx.clearRect(0,0,w,h);
+      pCtx.fillStyle = 'rgba(15,185,177,0.85)';
+      P.forEach(p=>{
+        p.x += p.vx; p.y += p.vy;
+        if (p.x<0||p.x>w) p.vx*=-1;
+        if (p.y<0||p.y>h) p.vy*=-1;
+        pCtx.beginPath(); pCtx.arc(p.x, p.y, p.r, 0, Math.PI*2); pCtx.fill();
+      });
+      requestAnimationFrame(stepParticles);
+    }
+    stepParticles();
+
+    // Lines
+    const nodes = Array.from({length: 24}).map(()=>({ x: Math.random()*nCanvas.width, y: Math.random()*nCanvas.height, vx: (Math.random()-.5)*0.28, vy: (Math.random()-.5)*0.28 }));
+    let mouse = { x: -9999, y: -9999 };
+    window.addEventListener('mousemove', (e)=>{ mouse.x = e.clientX; mouse.y = e.clientY; }, { passive: true });
+    window.addEventListener('mouseleave', ()=>{ mouse.x = -9999; mouse.y = -9999; });
+    function stepNeon(){
+      const { width:w, height:h } = nCanvas;
+      nCtx.clearRect(0,0,w,h);
+      nodes.forEach(n=>{ n.x += n.vx; n.y += n.vy; if (n.x<0||n.x>w) n.vx*=-1; if (n.y<0||n.y>h) n.vy*=-1; });
+      for (let i=0;i<nodes.length;i++){
+        for (let j=i+1;j<nodes.length;j++){
+          const a = nodes[i], b = nodes[j];
+          const dx = a.x - b.x, dy = a.y - b.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < 180){
+            const mDist = Math.hypot((a.x+b.x)/2 - mouse.x, (a.y+b.y)/2 - mouse.y);
+            const alpha = Math.max(0, 1 - dist/180) * Math.max(0.25, 1 - mDist/320);
+            nCtx.strokeStyle = `rgba(15,185,177,${0.34*alpha})`;
+            nCtx.lineWidth = 1.15;
+            nCtx.beginPath(); nCtx.moveTo(a.x, a.y); nCtx.lineTo(b.x, b.y); nCtx.stroke();
+          }
+        }
+      }
+      nodes.forEach(n=>{
+        const d = Math.hypot(n.x - mouse.x, n.y - mouse.y);
+        const alpha = Math.max(0, 1 - d/210);
+        nCtx.fillStyle = `rgba(124,58,237,${0.45*alpha})`;
+        nCtx.beginPath(); nCtx.arc(n.x, n.y, 2.1 + 2*alpha, 0, Math.PI*2); nCtx.fill();
+      });
+      requestAnimationFrame(stepNeon);
+    }
+    stepNeon();
+
+    // Language i18n
+    const I18N = {
+      en: {
+        nav_home: "Home", nav_about: "About", nav_skills: "Skills", nav_projects: "Projects", nav_contact: "Contact",
+        hero_name: "Boloki Ahmat Keindji",
+        hero_sub: "Final Year Student in Network & Communication Systems @ AUCA. Passionate about building secure, reliable digital infrastructure.",
+        hero_hi: "Hello, I'm Boloki",
+        hero_role: "Network & Communication Systems",
+        btn_about: "About Me", btn_skills: "Skills", btn_projects: "Projects",
+        about_title: "About Me",
+        about_body: "I'm a final year student specializing in Network & Communication Systems at AUCA. I love building reliable, secure, and modern digital infrastructures that connect people and ideas. My interests include routing, switching, network design, Linux systems, and practical security.",
+        about_location_label: "Location", about_location_value: "Kigali, Rwanda",
+        about_focus_label: "Focus", about_focus_value: "Networking, Systems, Security",
+        skills_title: "Skills",
+        skills_net: "Networking", skills_routing: "Routing & Switching", skills_design: "Network Design",
+        skills_sys: "Systems", skills_linux: "Linux Admin", skills_virtualization: "Virtualization",
+        skills_sec: "Security", skills_firewall: "Firewall & ACLs", skills_monitoring: "Monitoring",
+        projects_title: "Projects", projects_note: "Small sample shown",
+        prj1_title: "Campus Network Topology", prj1_desc: "Designed a scalable campus network with VLANs, inter-VLAN routing, and basic QoS.",
+        prj2_title: "Secure Edge Setup", prj2_desc: "Configured firewall rules, NAT, and VPN for small business remote access.",
+        prj3_title: "Linux Services Bundle", prj3_desc: "Deployed DHCP, DNS, and monitoring stack for a lab environment.",
+        tag_monitoring: "Monitoring",
+        contact_title: "Contact",
+        contact_desc: "Want to collaborate or just say hello? Send me a message below. This is a demo form and won’t send emails.",
+        label_name: "Name", label_email: "Email", label_message: "Message",
+        ph_name: "Your name", ph_email: "you@example.com", ph_message: "Write your message...",
+        btn_send: "Send", contact_demo_note: "Demo only — no emails are sent", contact_thanks: "Thanks! Your demo message was recorded locally.",
+        contact_info: "Contact Info", contact_city: "Kigali, Rwanda",
+        footer_note: "Built with care, clarity, and smooth motion."
+      },
+      fr: {
+        nav_home: "Accueil", nav_about: "À propos", nav_skills: "Compétences", nav_projects: "Projets", nav_contact: "Contact",
+        hero_name: "Boloki Ahmat Keindji",
+        hero_sub: "Étudiant en dernière année en Réseaux & Systèmes de Communication à l’AUCA. Passionné par les infrastructures numériques fiables et sécurisées.",
+        hero_hi: "Bonjour, je suis Boloki",
+        hero_role: "Réseaux & Systèmes de Communication",
+        btn_about: "À propos", btn_skills: "Compétences", btn_projects: "Projets",
+        about_title: "À propos de moi",
+        about_body: "Je suis étudiant en dernière année spécialisé en Réseaux & Systèmes de Communication à l’AUCA. J’aime construire des infrastructures numériques fiables, sécurisées et modernes qui connectent les personnes et les idées. Mes intérêts incluent le routage, la commutation, la conception réseau, Linux et la sécurité pratique.",
+        about_location_label: "Localisation", about_location_value: "Kigali, Rwanda",
+        about_focus_label: "Domaines", about_focus_value: "Réseaux, Systèmes, Sécurité",
+        skills_title: "Compétences",
+        skills_net: "Réseaux", skills_routing: "Routage & Commutation", skills_design: "Conception réseau",
+        skills_sys: "Systèmes", skills_linux: "Administration Linux", skills_virtualization: "Virtualisation",
+        skills_sec: "Sécurité", skills_firewall: "Pare-feu & ACL", skills_monitoring: "Supervision",
+        projects_title: "Projets", projects_note: "Petit échantillon présenté",
+        prj1_title: "Topologie Réseau de Campus", prj1_desc: "Conception d’un réseau de campus évolutif avec VLANs, routage inter-VLAN et QoS basique.",
+        prj2_title: "Configuration Edge Sécurisée", prj2_desc: "Règles de pare-feu, NAT et VPN pour l’accès distant d’une petite entreprise.",
+        prj3_title: "Services Linux", prj3_desc: "Déploiement de DHCP, DNS et d’une pile de supervision pour un labo.",
+        tag_monitoring: "Supervision",
+        contact_title: "Contact",
+        contact_desc: "Envie de collaborer ou juste dire bonjour ? Envoyez-moi un message ci-dessous. Ceci est un formulaire démo et n’enverra pas d’e-mails.",
+        label_name: "Nom", label_email: "Email", label_message: "Message",
+        ph_name: "Votre nom", ph_email: "vous@exemple.com", ph_message: "Écrivez votre message...",
+        btn_send: "Envoyer", contact_demo_note: "Démo uniquement — aucun e‑mail n’est envoyé", contact_thanks: "Merci ! Votre message démo a été enregistré localement.",
+        contact_info: "Infos de contact", contact_city: "Kigali, Rwanda",
+        footer_note: "Construit avec soin, clarté et fluidité."
+      },
+      ar: {
+        nav_home: "الرئيسية", nav_about: "نبذة عني", nav_skills: "المهارات", nav_projects: "المشاريع", nav_contact: "اتصل",
+        hero_name: "بولوقي أحمد كينجي",
+        hero_sub: "طالب سنة نهائية في الشبكات وأنظمة الاتصال بجامعة AUCA. شغوف ببناء بنى رقمية موثوقة وآمنة.",
+        hero_hi: "مرحباً، أنا بولوقي",
+        hero_role: "الشبكات وأنظمة الاتصال",
+        btn_about: "نبذة عني", btn_skills: "المهارات", btn_projects: "المشاريع",
+        about_title: "نبذة عني",
+        about_body: "أنا طالب في السنة النهائية متخصص في الشبكات وأنظمة الاتصال في AUCA. أحب بناء بنى تحتية رقمية موثوقة وآمنة وحديثة تربط بين الناس والأفكار. من اهتماماتي التوجيه، التحويل، تصميم الشبكات، لينكس، والأمن العملي.",
+        about_location_label: "الموقع", about_location_value: "كيغالي، رواندا",
+        about_focus_label: "الاهتمامات", about_focus_value: "الشبكات، الأنظمة، الأمن",
+        skills_title: "المهارات",
+        skills_net: "الشبكات", skills_routing: "التوجيه والتحويل", skills_design: "تصميم الشبكات",
+        skills_sys: "الأنظمة", skills_linux: "إدارة لينكس", skills_virtualization: "الافتراضية",
+        skills_sec: "الأمن", skills_firewall: "الجدار الناري وACL", skills_monitoring: "المراقبة",
+        projects_title: "المشاريع", projects_note: "عينات مختصرة",
+        prj1_title: "بنية شبكة الحرم الجامعي", prj1_desc: "تصميم شبكة قابلة للتوسع مع شبكات VLAN وتوجيه بين الشبكات وجودة خدمة أساسية.",
+        prj2_title: "تهيئة طرفية آمنة", prj2_desc: "إعداد قواعد الجدار الناري وNAT وVPN للوصول عن بُعد لشركة صغيرة.",
+        prj3_title: "حزمة خدمات لينكس", prj3_desc: "نشر DHCP وDNS وحزمة مراقبة لمعمل تدريبي.",
+        tag_monitoring: "المراقبة",
+        contact_title: "اتصل", contact_desc: "هل تريد التعاون أو مجرد إلقاء التحية؟ أرسل لي رسالة أدناه. هذا نموذج تجريبي ولن يرسل رسائل بريد إلكتروني.",
+        label_name: "الاسم", label_email: "البريد الإلكتروني", label_message: "الرسالة",
+        ph_name: "اسمك", ph_email: "you@example.com", ph_message: "اكتب رسالتك...",
+        btn_send: "إرسال", contact_demo_note: "للعرض فقط — لا يتم إرسال رسائل", contact_thanks: "شكراً! تم حفظ رسالتك التجريبية محلياً.",
+        contact_info: "معلومات الاتصال", contact_city: "كيغالي، رواندا",
+        footer_note: "بُني بعناية ووضوح وحركة سلسة."
+      }
+    };
+
+    const LANG_KEY = 'boloki_lang';
+    const langSelect = $('#langSelect');
+
+    function applyLang(lang) {
+      // Update text nodes
+      $$('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        const val = I18N[lang][key];
+        if (typeof val === 'string') el.textContent = val;
+      });
+      // Update placeholders
+      $$('[data-i18n-ph]').forEach(el => {
+        const key = el.getAttribute('data-i18n-ph');
+        const val = I18N[lang][key];
+        if (typeof val === 'string') el.setAttribute('placeholder', val);
+      });
+      // Direction and lang
+      document.documentElement.dir = (lang === 'ar') ? 'rtl' : 'ltr';
+      document.documentElement.lang = lang;
+    }
+
+    // Init language
+    const savedLang = localStorage.getItem(LANG_KEY) || 'en';
+    langSelect.value = savedLang;
+    applyLang(savedLang);
+
+    // On change
+    langSelect.addEventListener('change', (e) => {
+      const lang = e.target.value;
+      localStorage.setItem(LANG_KEY, lang);
+      applyLang(lang);
+    });
+</script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98006ee49630517e',t:'MTc1ODAyNjQzNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
